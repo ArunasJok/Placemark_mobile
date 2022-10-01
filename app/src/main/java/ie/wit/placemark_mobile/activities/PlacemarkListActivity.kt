@@ -14,9 +14,10 @@ import ie.wit.placemark_mobile.databinding.ActivityPlacemarkListBinding
 import ie.wit.placemark_mobile.databinding.CardPlacemarkBinding
 import ie.wit.placemark_mobile.main.MainApp
 import ie.wit.placemark_mobile.models.PlacemarkModel
-import org.wit.placemark.adapters.PlacemarkAdapter
+import ie.wit.placemark_mobile.adapters.PlacemarkAdapter
+import ie.wit.placemark_mobile.adapters.PlacemarkListener
 
-class PlacemarkListActivity : AppCompatActivity() {
+class PlacemarkListActivity : AppCompatActivity(), PlacemarkListener {
 
     lateinit var app: MainApp
     private lateinit var binding: ActivityPlacemarkListBinding
@@ -27,12 +28,12 @@ class PlacemarkListActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.toolbar.title = title
         setSupportActionBar(binding.toolbar)
-
         app = application as MainApp
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = PlacemarkAdapter(app.placemarks)
+        //binding.recyclerView.adapter = PlacemarkAdapter(app.placemarks)
+        binding.recyclerView.adapter = PlacemarkAdapter(app.placemarks.findAll(),this)
 
     }
 
@@ -50,6 +51,12 @@ class PlacemarkListActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPlacemarkClick(placemark: PlacemarkModel) {
+        val launcherIntent = Intent(this, PlacemarkActivity::class.java)
+        launcherIntent.putExtra("placemark_edit", placemark)
+        startActivityForResult(launcherIntent,0)
     }
 }
 
